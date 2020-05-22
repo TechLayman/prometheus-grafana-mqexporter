@@ -1,0 +1,17 @@
+app_mode = production
+data = data
+logs = log/grafana
+plugins = lib/plugins
+
+# Protocol (http, https, h2, socket)
+#protocol = https
+http_port = "{{ grafana_port }}"
+
+router_logging = true
+
+# https certs & key file
+;cert_file =
+;cert_key =
+
+[dashboards]
+min_refresh_interval = 5s

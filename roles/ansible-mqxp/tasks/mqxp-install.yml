@@ -1,0 +1,15 @@
+---
+- name: "generating {{ item }} script file"
+  template:   
+    src: "QMGR_mqxp.yml"
+    dest: "{{ mqxp_install_path }}/bin/{{ item }}_mqxp.sh"
+    owner: "mqm"
+    group: "mqm"
+    mode: "u=rwx,g=rwx,o=r"
+
+- name: "creating service object"
+  shell: "{{ mqxp_install_path }}/config/create-service-object.sh {{ mqxp_install_path }}/config/mqxp_service_object.mqsc {{ item }}"
+
+- set_fact:
+    mqxp_port: "{{ (mqxp_port | int + 1) }}"
+

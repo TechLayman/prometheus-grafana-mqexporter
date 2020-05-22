@@ -1,0 +1,4 @@
+---
+- name: "Cleaning service objects"
+  shell: "{{ mqxp_install_path }}/config/remove-service-object.sh {{ item }}"
+

@@ -1,0 +1,81 @@
+---
+- name: "create grafana service group"
+  group:
+    name: "{{ grafana_group }}"
+    state: present
+
+- name: "create grafana service account"
+  user:
+    name: "{{ grafana_user }}"
+    group: "{{ grafana_group }}"
+    createhome: no
+    shell: "/sbin/nologin"
+    comment: "Grafana service account"
+    state: present
+
+
+- name: "Create grafana directories"
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ grafana_user }}"
+    group: "{{ grafana_group }}"
+    mode: "u=rwx,g=rx,o=r"
+  with_items:
+    - "{{ grafana_install_path }}"
+    - "{{ grafana_install_path }}/lib"
+    - "{{ grafana_install_path }}/log"
+    - "{{ grafana_install_path }}/lib/dashboards"
+
+- name: "downloading Grafana"
+  get_url:
+    url: "{{ grafana_download_url }}"
+    dest: "/tmp"
+  retries: 5
+  delay: 10
+  when: grafana_tar_status.stat.exists == false
+
+- name: "expanding grafana binaries"
+  unarchive:
+    src: "/tmp/grafana-{{ grafana_version }}.linux-amd64.tar.gz"
+    remote_src: yes
+    dest: "{{ grafana_install_path }}"
+    owner: "{{ grafana_user }}"
+    group: "{{ grafana_group }}"
+    mode: "u=rwx,g=rx,o=r"
+    extra_opts: [--strip-components=1]
+
+- name: "pushing grafana default artifacts"
+  template:
+    src: '{{ item.src }}'
+    dest: '{{ item.dest }}'
+    owner: '{{ grafana_user }}'
+    group: '{{ grafana_group }}'
+    mode: "u=rwx,g=rx,o=r"
+  with_items:
+    - { src: 'datasource.yml', dest: '{{ grafana_install_path }}/conf/provisioning/datasources/prometheus-local.yml' }
+    - { src: 'dashboards.yml', dest: '{{ grafana_install_path }}/conf/provisioning/dashboards/dashboards-defautl.yml' }
+    - { src: 'grafana_service_template.yml', dest: '/etc/systemd/system/{{ grafana_service_name }}.service' }
+    - { src: 'grafana_default_config.yml', dest: '{{ grafana_install_path }}/conf/grafana.ini' }
+
+- name: "copyign default dashboards"
+  copy:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    owner: "{{ grafana_user }}"
+    group: "{{ grafana_group }}"
+    mode: "u=rwx,g=rx,o=r"
+  with_items:
+    - { src: 'node-exporter-full.json', dest: '{{ grafana_install_path }}/lib/dashboards/node-exporter-full.json' }
+    - { src: 'mq-dashboard-1589291261459.json', dest: '{{ grafana_install_path }}/lib/dashboards/ibm-mq-grafana.json' }
+    - { src: 'ibm-ace-dashboard.json', dest: '{{ grafana_install_path }}/lib/dashboards/ibm-ace-grafana.json' }
+
+- name: "reloading systemd daemon"
+  shell: "systemctl daemon-reload"
+  notify:
+    - "start {{ grafana_service_name }}"
+
+#- name: "cleaning up grafana temp files"
+#  file:
+#    path: "/tmp/grafana-{{ grafana_version }}.linux-amd64.tar.gz"
+#    state: absent 

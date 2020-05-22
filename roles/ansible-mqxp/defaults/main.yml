@@ -1,0 +1,5 @@
+---
+# defaults file for ansible-mqxp
+mqxp_action: null
+mqxp_install_path: /opt/insight/mqxpv9
+mqxp_port: 8171

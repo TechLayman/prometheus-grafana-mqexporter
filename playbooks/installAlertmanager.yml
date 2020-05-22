@@ -1,0 +1,8 @@
+---
+- hosts: promservers
+  become: yes
+  vars:
+    choice:
+  roles:
+    - role: ansible-alertmanager
+      alertmanager_action: "{{ choice }}"

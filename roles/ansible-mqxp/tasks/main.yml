@@ -1,0 +1,59 @@
+---
+# tasks file for ansible-prometheus
+- name: "Gathering list of running Queue Manager names"
+  shell: "dspmq |grep 'Running' | awk -F '[()]' '{print $2}'"
+  register: qmgr_list
+
+- block:
+    - name: "Create mqxp directories"
+      file:
+        path: "{{ item }}"
+        state: directory
+        owner: "mqm"
+        group: "mqm"
+        mode: "u=rwx,g=rwx,o=r"
+      with_items:
+        - "{{ mqxp_install_path }}"
+        - "{{ mqxp_install_path }}/bin"
+        - "{{ mqxp_install_path }}/config"
+        - "{{ mqxp_install_path }}/log"
+
+    - name: "Copying mqxp exicutables to target"
+      copy:
+        src: "{{ item.src }}"
+        dest: "{{ item.dest }}"
+        owner: "mqm"
+        group: "mqm"
+        mode: 0775
+      with_items:
+        - { src: 'mq_exporter', dest: '{{ mqxp_install_path }}/bin' }
+        - { src: 'create-service-object.sh', dest: '{{ mqxp_install_path }}/config' }
+        - { src: 'remove-service-object.sh', dest: '{{ mqxp_install_path }}/config' }
+
+    - name: "Copying service object"
+      template:
+        src: "mqxp_service_object.yml"
+        dest: "{{ mqxp_install_path }}/config/mqxp_service_object.mqsc"
+        owner: "mqm"
+        group: "mqm"
+        mode: 0775
+
+
+    - name: "configuring exporter"
+      include_tasks: mqxp-install.yml
+      loop: "{{ qmgr_list.stdout_lines }}"
+  
+  when: mqxp_action == "install"
+
+- block: 
+    - name: "Removing mqxp service objects"
+      include_tasks: mqxp-uninstall.yml
+      loop: "{{ qmgr_list.stdout_lines }}"
+    
+    - name: "Removing mqxp directories"
+      file:
+        path: "{{ mqxp_install_path }}"
+        state: absent
+     
+  when: mqxp_action == "uninstall"
+ 

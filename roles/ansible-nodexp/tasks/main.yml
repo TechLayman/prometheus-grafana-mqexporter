@@ -1,0 +1,31 @@
+---
+# tasks file for ansible-nodexp
+- name: "Role Usage.."
+  debug:
+    msg: 'Pass the correct Action with variable "nodexp_action:" [ start | stop | restart | install | uninstall ]'
+  when: nodexp_action not in ["start", "stop", "restart", "install", "uninstall"]
+
+- command: /bin/true
+  notify:
+    - "stop {{ nodexp_service_name }}"
+  when: nodexp_action == "stop"
+- command: /bin/true
+  notify:
+    - "start {{ nodexp_service_name }}"
+  when: nodexp_action == "start"
+- command: /bin/true
+  notify:
+    - "restart {{ nodexp_service_name }}"
+  when: nodexp_action == "restart"
+
+- name: "Uninstalling nodexp"
+  include: nodexp-uninstall.yml
+  when: nodexp_action == "uninstall"
+
+- block:
+  - name: "Gathering facts"
+    include: gather-facts.yml
+
+  - name: "Installing nodexp"
+    include: nodexp-install.yml
+  when: nodexp_action == "install"

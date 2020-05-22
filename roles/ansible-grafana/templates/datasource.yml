@@ -1,0 +1,7 @@
+apiVersion: 1
+
+datasources:
+  - name: '{{ datasource_name }}'
+    type: '{{ datasource_type }}'
+    access: proxy
+    url: "{{ prometheus_datasource_url }}"

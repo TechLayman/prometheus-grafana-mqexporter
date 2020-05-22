@@ -1,0 +1,9 @@
+apiVersion: 1
+
+providers:
+ - name: 'default'
+   orgId: 1
+   folder: 'Prolifics'
+   type: file
+   options:
+     path: "{{ grafana_install_path }}/lib/dashboards"

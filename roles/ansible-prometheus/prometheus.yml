@@ -1,0 +1,5 @@
+---
+- hosts: rhel7-21
+  become: yes
+  roles:
+    - role: ansible-prometheus
