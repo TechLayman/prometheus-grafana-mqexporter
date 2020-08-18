@@ -53,22 +53,22 @@
     group: '{{ grafana_group }}'
     mode: "u=rwx,g=rx,o=r"
   with_items:
-    - { src: 'datasource.yml', dest: '{{ grafana_install_path }}/conf/provisioning/datasources/prometheus-local.yml' }
-    - { src: 'dashboards.yml', dest: '{{ grafana_install_path }}/conf/provisioning/dashboards/dashboards-defautl.yml' }
+#    - { src: 'datasource.yml', dest: '{{ grafana_install_path }}/conf/provisioning/datasources/prometheus-local.yml' }
+#    - { src: 'dashboards.yml', dest: '{{ grafana_install_path }}/conf/provisioning/dashboards/dashboards-defautl.yml' }
     - { src: 'grafana_service_template.yml', dest: '/etc/systemd/system/{{ grafana_service_name }}.service' }
     - { src: 'grafana_default_config.yml', dest: '{{ grafana_install_path }}/conf/grafana.ini' }
 
-- name: "copyign default dashboards"
-  copy:
-    src: "{{ item.src }}"
-    dest: "{{ item.dest }}"
-    owner: "{{ grafana_user }}"
-    group: "{{ grafana_group }}"
-    mode: "u=rwx,g=rx,o=r"
-  with_items:
-    - { src: 'node-exporter-full.json', dest: '{{ grafana_install_path }}/lib/dashboards/node-exporter-full.json' }
-    - { src: 'mq-dashboard-1589291261459.json', dest: '{{ grafana_install_path }}/lib/dashboards/ibm-mq-grafana.json' }
-    - { src: 'ibm-ace-dashboard.json', dest: '{{ grafana_install_path }}/lib/dashboards/ibm-ace-grafana.json' }
+#- name: "copyign default dashboards"
+#  copy:
+#    src: "{{ item.src }}"
+#    dest: "{{ item.dest }}"
+#    owner: "{{ grafana_user }}"
+#    group: "{{ grafana_group }}"
+#    mode: "u=rwx,g=rx,o=r"
+#  with_items:
+#    - { src: 'node-exporter-full.json', dest: '{{ grafana_install_path }}/lib/dashboards/node-exporter-full.json' }
+#    - { src: 'mq-dashboard-1589291261459.json', dest: '{{ grafana_install_path }}/lib/dashboards/ibm-mq-grafana.json' }
+#    - { src: 'ibm-ace-dashboard.json', dest: '{{ grafana_install_path }}/lib/dashboards/ibm-ace-grafana.json' }
 
 - name: "reloading systemd daemon"
   shell: "systemctl daemon-reload"

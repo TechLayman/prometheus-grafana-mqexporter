@@ -1,8 +1,8 @@
 global:
-  smtp_from: 'annu.jai@outlook.com'
-  smtp_smarthost: 'email-smtp.us-west-2.amazonaws.com:25'
-  smtp_auth_username: 'AKIARWLQBO4X6A2OIKEU'
-  smtp_auth_password: 'BC62f1ijCiWMZh/SJ2iWsoWfwvxn+vFQdeny4Y4q2uje'
+  smtp_from: 'sribabu.mail@gmail.com'
+  smtp_smarthost: 'smtp.gmail.com:587'
+  smtp_auth_username: 'sribabu.mail@gmail.com'
+  smtp_auth_password: 'mcnnhabnohoborpv'
 
   slack_api_url: 'https://hooks.slack.com/services/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'
 
@@ -39,5 +39,5 @@ receivers:
       text: "summary: {{ .CommonAnnotations.summary }}\ndescription: {{ .CommonAnnotations.description }}"
 
   email_configs:
-    - to: 'annu.singh@prolifics.com'
+  - to: 'annu.singh@prolifics.com'
 

@@ -1,23 +1,24 @@
 ---
 - hosts: promservers
-  user: ec2-user
+  user: root 
   become: yes
   vars:
-    choice:
+    user_action:
   roles:
     - role: ansible-prometheus
-      prometheus_action: "{{ choice }}"
+      prometheus_action: "{{ user_action }}"
     - role: ansible-grafana
-      grafana_action: "{{ choice }}"
+      grafana_action: "{{ user_action }}"
     - role: ansible-nodexp
-      nodexp_action: "{{ choice }}"
+      nodexp_action: "{{ user_action }}"
     - role: ansible-alertmanager
-      alertmanager_action: "{{ choice }}"
+      alertmanager_action: "{{ user_action }}"
 
 - hosts: mqservers
+  user: root
   become: yes
   roles:
     - role: ansible-nodexp
-      nodexp_action: "{{ choice }}"
+      nodexp_action: "{{ user_action }}"
     - role: ansible-mqxp 
-      mqxp_action: "{{ choice }}"
+      mqxp_action: "{{ user_action }}"

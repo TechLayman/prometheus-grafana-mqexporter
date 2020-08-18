@@ -3,7 +3,7 @@ global:
   scrape_timeout: 10s
 
 rule_files:
-  - mq_alertrules.yml 
+  - mq_alertrules.yml
 
 alerting:
   alertmanagers:
@@ -19,28 +19,31 @@ scrape_configs:
   - job_name: 'node_exporters'
     scrape_interval: 10s
     static_configs:
-      - targets: [ 'localhost:8180' ]
-        labels:
-          host: 'prom-server'
+#      - targets: [ 'jumpbox11:8180' ]
+#        labels:
+#          host: 'jumpbox11'
 
-      - targets: [ '172.31.4.173:8180' ]
+      - targets: [ 'server21:8180' ]
         labels:
-          host: 'mq-server'
+          host: 'server21'
+
+      - targets: [ 'server81:8180' ]
+        labels:
+          host: 'server81'
+
+      - targets: [ 'server82:8180' ]
+        labels:
+          host: 'server82'
+
 
   - job_name: 'mqxp'
     scrape_interval: 10s
     static_configs:
-      - targets: [ '172.31.4.173:8171', '172.31.4.173:8172' ]
+      - targets: [ 'server81:8171', 'server81:8172', 'server81:8173', 'server81:8174' ]
         labels:
-          host: 'mq-server'
-      - targets: [ 'localhost:9157' ]
-        labels:
-          host: 'ace-mqserver'
+          host: 'server81'
+#      - targets: [ 'redhat81:8171', 'redhat81:8172' ]
+#        labels:
+#          host: 'redhat81'
 
-  - job_name: 'ace_exporters'
-    scrape_interval: 10s
-    static_configs:
-      - targets: [ 'localhost:9483' ]
-        labels:
-          host: 'ace-server'
 
